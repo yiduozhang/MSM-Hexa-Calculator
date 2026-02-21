@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-
+import math
+import numpy as np
 app = Flask(__name__)
 CORS(app)
 
@@ -14,11 +15,29 @@ def calculate_probability(target_main, target_sub, current_main, current_sub_1, 
 
     Main stat is weighted at 50%, and the two sub stats split the remaining 50%.
     """
-    main_progress = min(current_main / target_main, 1.0) if target_main > 0 else 0.0
-    sub_progress = min((current_sub_1 + current_sub_2) / (target_sub * 2), 1.0) if target_sub > 0 else 0.0
+    prob = 0
+    prob_adjust = {7:1, 8: 0.15/0.2, 9: 0.5 * .5 / .2, 10: 0.25 * 0.5}
 
-    probability = (main_progress * 0.5 + sub_progress * 0.5) * 100
-    return round(probability, 2)
+    combo = [current_main, current_sub_1, current_sub_2]
+    left = 20 - np.sum(combo)
+
+    for i in range(target_main,11):
+        steps = i - combo[0]
+        prob_to_add = pow(0.2, steps) * pow(.8, left-steps) * math.comb(left,steps)
+        prob += prob_to_add * prob_adjust[i]
+
+    if target_sub <=10:
+        for j in range(target_sub, max(20-combo[0]-combo[2]+1, 11)):
+            steps = j - combo[1]
+            prob_to_add = pow(0.4, steps) * pow(.6, left-steps) * math.comb(left, steps)
+            prob += prob_to_add
+
+        for j in range(target_sub, max(20-combo[0]-combo[1]+1, 11)):
+            steps = j - combo[2]
+            prob_to_add = pow(0.4, steps) * pow(.6, left-steps) * math.comb(left, steps)
+            prob += prob_to_add
+
+    return round(prob, 2)
 
 
 @app.route('/api/calculate', methods=['POST'])
