@@ -48,9 +48,12 @@
 </head>
 <body>
     <h1>MSM Hexa Calculator</h1>
+    <p style="font-size: 0.85rem; color: #555; margin-bottom: 16px;">
+        Probability is based on OR. If you only focus on main stat, put 11 or higher in sub stats.
+    </p>
     <form id="hexa-form">
         <label for="target_main">TARGET_MAIN</label>
-        <input type="number" id="target_main" placeholder="Min: 7" required>
+        <input type="number" id="target_main" placeholder="Min: 7, Max: 10" min="7" max="10" required>
 
         <label for="target_sub">TARGET_SUB</label>
         <input type="number" id="target_sub" placeholder="Min: 9" required>
