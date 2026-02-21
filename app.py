@@ -37,7 +37,7 @@ def calculate_probability(target_main, target_sub, current_main, current_sub_1, 
             prob_to_add = pow(0.4, steps) * pow(.6, left-steps) * math.comb(left, steps)
             prob += prob_to_add
 
-    return round(prob, 2)
+    return round(prob * 100, 2)
 
 
 @app.route('/api/calculate', methods=['POST'])
